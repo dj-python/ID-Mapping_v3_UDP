@@ -7,6 +7,8 @@ import xml.etree.ElementTree as ET
 import os
 import time
 import inspect
+from PySide6.QtCore import QObject, QTimer
+from typing import Dict, Any
 
 class TCPServer(QThread):
     """
@@ -124,6 +126,8 @@ class TCPServer(QThread):
             print(f"Error parsing sysInfo.xml: {e}")
             return None
 
+
+
     def get_connected_sockets(self, clients_info):
         """
         연결된 클라이언트만 포함하는 client_sockets 딕셔너리를 반환합니다.
@@ -151,7 +155,9 @@ class TCPServer(QThread):
                 return
 
             # ping 관련 분기 제거: 모든 메시지를 동일하게 처리
-            print(f"Received data from {client_addr}: {line_text}")
+            ts_str = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(now_ts))
+            print(f"[{ts_str}] Received data from {client_addr}: {line_text}")
+            # print(f"Received data from {client_addr}: {line_text}")
 
             where_msg = f"Write Card {bank_number}"
             self.signalMessage.emit(self.objectName(), 'job', dict(where=where_msg, msg=line_text))
@@ -417,3 +423,5 @@ class TCPServer(QThread):
             return True
         except socket.error:
             return False
+
+
